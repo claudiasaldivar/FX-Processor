@@ -105,6 +105,13 @@ async def reconcile_balances(user_id: str) -> ReconciliationResponse:
     result = wallet_service.reconcile_balances(user_id)
     return ReconciliationResponse(**result)
 
+@app.get("/fx-rates")
+async def get_fx_rates():
+    return {
+        f"{from_curr}_{to_curr}": rate 
+        for (from_curr, to_curr), rate in wallet_service.fx_rates.items()
+    }
+
 @app.get("/")
 async def root():
     return {"message": "FX Payment Processor is running"}
