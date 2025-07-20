@@ -11,3 +11,8 @@ class TestAPI:
         wallet_service.wallets.clear()
         wallet_service.transactions.clear()
         wallet_service.transaction_counter = 0
+
+    def test_root_endpoint(self):
+        response = client.get("/")
+        assert response.status_code == 200
+        assert response.json() == {"message": "FX Payment Processor is running"}
