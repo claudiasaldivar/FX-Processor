@@ -77,6 +77,10 @@ async def withdraw_funds(user_id: str, request: WithdrawRequest):
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
+@app.get("/wallets/{user_id}/balances")
+async def get_balances(user_id: str) -> Dict[str, Decimal]:
+    return wallet_service.get_balances(user_id)
+
 @app.get("/")
 async def root():
     return {"message": "FX Payment Processor is running"}
