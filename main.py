@@ -44,3 +44,43 @@ class ReconciliationResponse(BaseModel):
     current_balances: Dict[str, Decimal]
     calculated_balances: Dict[str, Decimal]
     balanced: bool
+
+
+@app.post("/wallets/{user_id}/fund")
+async def fund_wallet(user_id: str, request: FundRequest):
+    try:
+        result = wallet_service.fund_wallet(user_id, request.currency, request.amount)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/wallets/{user_id}/convert")
+async def convert_currency(user_id: str, request: ConvertRequest):
+    try:
+        result = wallet_service.convert_currency(
+            user_id, 
+            request.from_currency, 
+            request.to_currency, 
+            request.amount
+        )
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/wallets/{user_id}/withdraw")
+async def withdraw_funds(user_id: str, request: WithdrawRequest):
+    try:
+        result = wallet_service.withdraw_funds(user_id, request.currency, request.amount)
+        return result
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@app.get("/")
+async def root():
+    return {"message": "FX Payment Processor is running"}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8000)
