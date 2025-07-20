@@ -119,7 +119,6 @@ async def root():
 @app.post("/fx-rates")
 async def update_fx_rates(rates: Dict[str, Decimal]):
     try:
-        # Convert string keys back to tuples
         new_rates = {}
         for key, rate in rates.items():
             if "_" in key:
