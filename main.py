@@ -81,6 +81,25 @@ async def withdraw_funds(user_id: str, request: WithdrawRequest):
 async def get_balances(user_id: str) -> Dict[str, Decimal]:
     return wallet_service.get_balances(user_id)
 
+@app.get("/wallets/{user_id}/transactions")
+async def get_transactions(user_id: str) -> List[TransactionResponse]:
+    transactions = wallet_service.get_transactions(user_id)
+    return [
+        TransactionResponse(
+            id=tx.id,
+            user_id=tx.user_id,
+            type=tx.type.value,
+            currency=tx.currency,
+            amount=tx.amount,
+            timestamp=tx.timestamp,
+            description=tx.description,
+            from_currency=tx.from_currency,
+            to_currency=tx.to_currency,
+            exchange_rate=tx.exchange_rate
+        )
+        for tx in transactions
+    ]
+
 @app.get("/")
 async def root():
     return {"message": "FX Payment Processor is running"}
