@@ -116,6 +116,21 @@ async def get_fx_rates():
 async def root():
     return {"message": "FX Payment Processor is running"}
 
+@app.post("/fx-rates")
+async def update_fx_rates(rates: Dict[str, Decimal]):
+    try:
+        # Convert string keys back to tuples
+        new_rates = {}
+        for key, rate in rates.items():
+            if "_" in key:
+                from_curr, to_curr = key.split("_", 1)
+                new_rates[(from_curr, to_curr)] = rate
+        
+        wallet_service.update_fx_rates(new_rates)
+        return {"success": True, "updated_rates": len(new_rates)}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
